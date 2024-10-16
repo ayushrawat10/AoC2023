@@ -23,31 +23,41 @@ fn main() {
     println!("{}", result);
 }
 
-fn process_line(input: &str, set: &HashMap<String, i64>) -> Option<i64> {
+fn process_line(input: &str, map: &HashMap<String, i64>) -> Option<i64> {
     let mut first: i64 = 0;
     let mut last: i64 = 0;
-    for c in input.chars() {
+    for (i, c) in input.chars().enumerate() {
         if c.is_digit(10) {
             first = 10 * c.to_string().parse::<i64>().unwrap();
             break;
         } else {
-            for val in set.keys() {
-                let stri = val.chars();
-                loop {
-                    match stri.next() {
-                        c => {
-
-                        }
-                    }
+            let mut found: bool = false;
+            for val in map.keys() {
+                if input[i..].starts_with(val) {
+                    first = 10 * map.get(val).unwrap();
+                    found = true;
                 }
-
+            }
+            if found {
+                break;
             }
         }
     }
-    for c in input.chars().rev() {
+    for (i, c) in input.chars().rev().enumerate() {
         if c.is_digit(10) {
             last = c.to_string().parse::<i64>().unwrap();
             break;
+        } else {
+            let mut found: bool = false;
+            for val in map.keys() {
+                if input[input.len()-i-1..].starts_with(val) {
+                    last = *map.get(val).unwrap();
+                    found = true;
+                }
+            }
+            if found {
+                break;
+            }
         }
     }
     Some(first + last)
